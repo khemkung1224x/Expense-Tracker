@@ -509,7 +509,24 @@ export const STANDALONE_HTML_CONTENT = `<!DOCTYPE html>
       populateCategories();
       populateDropdownYears();
       renderAll();
+      syncFromSheets();
     });
+
+    function syncFromSheets() {
+      const url = getStoredUrl();
+      if (!url) return;
+      const getUrl = url.includes('?') ? url + '&action=getTransactions' : url + '?action=getTransactions';
+      fetch(getUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && Array.isArray(data.transactions) && data.transactions.length > 0) {
+            transactions = data.transactions;
+            saveTransactions(transactions);
+            renderAll();
+          }
+        })
+        .catch(err => console.log('Sync error:', err));
+    }
 
     function renderAll() {
       renderRecentList();
@@ -657,6 +674,16 @@ export const STANDALONE_HTML_CONTENT = `<!DOCTYPE html>
       saveTransactions(transactions);
       showToast('info', 'ลบรายการเรียบร้อยแล้ว');
       renderAll();
+
+      const webAppUrl = getStoredUrl();
+      if (webAppUrl) {
+        fetch(webAppUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'delete', id: id })
+        }).catch(err => console.log('Delete error', err));
+      }
     }
 
     function renderRecentList() {

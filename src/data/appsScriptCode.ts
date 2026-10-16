@@ -140,6 +140,24 @@ function doPost(e) {
       throw new Error('ไม่พบข้อมูลส่งมา (No data provided)');
     }
 
+    // 1. ตรวจสอบคำสั่งลบรายการ
+    if (data.action === 'delete' && data.id) {
+      const rows = sheet.getDataRange().getValues();
+      let deleted = false;
+      for (let i = rows.length - 1; i >= 1; i--) {
+        if (String(rows[i][7]) === String(data.id)) {
+          sheet.deleteRow(i + 1);
+          deleted = true;
+          break;
+        }
+      }
+      return createJsonResponse({
+        success: true,
+        message: deleted ? 'ลบรายการสำเร็จ' : 'ไม่พบรายการที่ต้องการลบ',
+        id: data.id
+      });
+    }
+
     const items = Array.isArray(data) ? data : (data.items || [data]);
     const timestamp = new Date();
     const addedRows = [];

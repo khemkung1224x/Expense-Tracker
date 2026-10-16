@@ -696,9 +696,21 @@ export function saveStoredTransactions(transactions: Transaction[]): void {
 
 export function getStoredWebAppUrl(): string {
   try {
+    const envUrl = (import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '').trim();
+    if (envUrl) {
+      return envUrl;
+    }
     return localStorage.getItem(WEBAPP_URL_KEY) || '';
   } catch {
     return '';
+  }
+}
+
+export function isEnvWebAppUrl(): boolean {
+  try {
+    return Boolean((import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '').trim());
+  } catch {
+    return false;
   }
 }
 

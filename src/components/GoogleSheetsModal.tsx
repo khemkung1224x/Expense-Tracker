@@ -4,6 +4,7 @@ import {
   DEPLOY_GUIDE_STEPS,
 } from '../data/appsScriptCode';
 import { STANDALONE_HTML_CONTENT } from '../lib/standaloneHtml';
+import { isEnvWebAppUrl } from '../data/mockData';
 import {
   X,
   Copy,
@@ -255,10 +256,27 @@ export const GoogleSheetsModal: React.FC<GoogleSheetsModalProps> = ({
                     บันทึก
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  URL ที่ได้จากการ Deploy as Web app (ตั้งค่า Who has access เป็น Anyone)
-                </p>
               </div>
+
+              {/* Vercel Env Variable Status */}
+              {isEnvWebAppUrl() ? (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">เชื่อมต่อผ่าน Vercel Environment Variable แล้ว</span>
+                    <p className="text-[11px] text-emerald-700 mt-0.5">
+                      ระบบดึงค่าจาก <code>VITE_GOOGLE_APPS_SCRIPT_URL</code> อัตโนมัติ ทำให้คอมพิวเตอร์และมือถือเข้าถึงชีตเดียวกัน 100%
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                  <span className="font-bold text-slate-800">🚀 เตรียม Deploy บน Vercel:</span>
+                  <p className="text-[11px] mt-0.5 text-slate-500">
+                    สามารถนำ Web App URL ไปใส่ใน Vercel &rarr; <b>Settings</b> &rarr; <b>Environment Variables</b> ในชื่อ <code>VITE_GOOGLE_APPS_SCRIPT_URL</code> เพื่อให้ทุกเครื่องที่เปิดเว็บใช้ URL เดียวกันโดยไม่ต้องกรอกซ้ำ
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2.5 pt-1">

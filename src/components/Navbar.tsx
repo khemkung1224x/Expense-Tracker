@@ -5,6 +5,7 @@ import {
   BarChart3,
   CalendarRange,
   Wallet,
+  RotateCw,
 } from 'lucide-react';
 
 export type TabType = 'entry' | 'monthly' | 'annual';
@@ -14,6 +15,8 @@ interface NavbarProps {
   onChangeTab: (tab: TabType) => void;
   onOpenSheetsModal: () => void;
   hasSheetsConfigured: boolean;
+  onRefreshData: () => Promise<void>;
+  isSyncing: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,6 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onChangeTab,
   onOpenSheetsModal,
   hasSheetsConfigured,
+  onRefreshData,
+  isSyncing,
 }) => {
   const navItems = [
     {
@@ -44,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       {/* Desktop & Tablet Top Bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-4">
           {/* Logo / Brand */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm flex-shrink-0">
@@ -57,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </h1>
                 {hasSheetsConfigured && (
                   <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold">
-                    ชีตเชื่อมต่อแล้ว
+                    Sheets Live
                   </span>
                 )}
               </div>
@@ -90,11 +95,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2">
+            {/* Manual Sync / Refresh Button */}
+            <button
+              onClick={onRefreshData}
+              disabled={isSyncing}
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm disabled:opacity-60 active:scale-95"
+              title="รีเฟรชข้อมูลล่าสุดจาก Google Sheets"
+            >
+              <RotateCw className={`w-3.5 h-3.5 text-slate-600 ${isSyncing ? 'animate-spin text-emerald-600' : ''}`} />
+              <span className="text-xs">
+                {isSyncing ? 'กำลังซิงค์...' : 'รีเฟรช'}
+              </span>
+            </button>
+
             {/* Google Sheets Modal Button */}
             <button
               onClick={onOpenSheetsModal}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
                 hasSheetsConfigured
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
@@ -102,8 +120,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="ตั้งค่า Google Sheets"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>
-                {hasSheetsConfigured ? 'Google Sheets' : 'เชื่อมต่อชีต'}
+              <span className="hidden sm:inline">
+                {hasSheetsConfigured ? 'Google Sheets' : 'ตั้งค่าชีต'}
               </span>
             </button>
           </div>
