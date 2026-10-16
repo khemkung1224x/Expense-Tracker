@@ -10,7 +10,6 @@ import {
   saveStoredTransactions,
   getStoredWebAppUrl,
   saveStoredWebAppUrl,
-  INITIAL_TRANSACTIONS,
   isEnvWebAppUrl,
 } from './data/mockData';
 import { Navbar, TabType } from './components/Navbar';
@@ -25,7 +24,7 @@ export default function App() {
   // Navigation tab
   const [activeTab, setActiveTab] = useState<TabType>('entry');
 
-  // Transactions State: initial from local cache, then updated from Google Sheets
+  // Transactions State: เริ่มต้นเป็น Array ว่างเปล่า หรือดึงเฉพาะข้อมูลจริงที่เคยบันทึก
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     return loadStoredTransactions();
   });
@@ -53,11 +52,13 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Ensure clean light theme by removing any legacy dark class
+  // Ensure clean light theme and purge legacy mock storage keys
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.classList.remove('dark');
       localStorage.removeItem('THEME_MODE');
+      localStorage.removeItem('EXPENSE_TRACKER_TRANSACTIONS_V1');
+      localStorage.removeItem('STANDALONE_EXPENSE_DATA');
     }
   }, []);
 
@@ -251,20 +252,9 @@ export default function App() {
     await fetchTransactionsFromSheets(webAppUrl, true);
   };
 
-  // Reset to Mock Data
-  const handleResetMockData = () => {
-    setTransactions(INITIAL_TRANSACTIONS);
-    saveStoredTransactions(INITIAL_TRANSACTIONS);
-    addToast('success', 'รีเซ็ตข้อมูลตัวอย่าง 12 เดือนเรียบร้อยแล้ว');
-  };
-
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans">
-        {/* Toast Alerts */}
-        <Toast toasts={toasts} onDismiss={dismissToast} />
-
-        {/* Navigation Bar with Manual Refresh Button */}
+      <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col antialiased selection:bg-emerald-500 selection:text-white pb-20 md:pb-6">
         <Navbar
           activeTab={activeTab}
           onChangeTab={setActiveTab}
@@ -274,8 +264,27 @@ export default function App() {
           isSyncing={isSyncing}
         />
 
+        {/* Sync Status Banner if connected */}
+        {webAppUrl.trim() && (
+          <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-1.5 text-xs text-emerald-800 flex items-center justify-between">
+            <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>เชื่อมต่อ Google Sheets แล้ว (Single Source of Truth)</span>
+              </span>
+              <button
+                onClick={handleManualRefresh}
+                disabled={isSyncing}
+                className="text-emerald-700 hover:text-emerald-900 font-medium underline cursor-pointer disabled:opacity-50"
+              >
+                {isSyncing ? 'กำลังดึงข้อมูล...' : 'ซิงก์ด่วน'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Main Content Area */}
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-12">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
           {activeTab === 'entry' && (
             <EntryFormTab
               transactions={transactions}
@@ -298,6 +307,9 @@ export default function App() {
           )}
         </main>
 
+        {/* Toast Notification Container */}
+        <Toast toasts={toasts} onDismiss={dismissToast} />
+
         {/* Google Sheets Setup Modal */}
         <GoogleSheetsModal
           isOpen={isSheetsModalOpen}
@@ -308,7 +320,6 @@ export default function App() {
             await fetchTransactionsFromSheets(webAppUrl, true);
           }}
           isSyncing={isSyncing}
-          onResetMockData={handleResetMockData}
         />
 
         {/* Minimal Footer */}
@@ -331,13 +342,6 @@ export default function App() {
                 className="hover:text-slate-800 underline cursor-pointer disabled:opacity-50"
               >
                 {isSyncing ? 'กำลังซิงค์...' : 'รีเฟรชข้อมูล'}
-              </button>
-              <span>•</span>
-              <button
-                onClick={handleResetMockData}
-                className="hover:text-slate-800 underline cursor-pointer"
-              >
-                รีเซ็ตข้อมูลตัวอย่าง
               </button>
             </div>
           </div>

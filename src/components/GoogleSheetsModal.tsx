@@ -27,7 +27,6 @@ interface GoogleSheetsModalProps {
   onSaveWebAppUrl: (url: string) => void;
   onSyncWithSheets: () => Promise<void>;
   isSyncing: boolean;
-  onResetMockData: () => void;
 }
 
 export const GoogleSheetsModal: React.FC<GoogleSheetsModalProps> = ({
@@ -37,7 +36,6 @@ export const GoogleSheetsModal: React.FC<GoogleSheetsModalProps> = ({
   onSaveWebAppUrl,
   onSyncWithSheets,
   isSyncing,
-  onResetMockData,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'url' | 'code' | 'html' | 'guide'>('url');
   const [inputUrl, setInputUrl] = useState<string>(webAppUrl);
@@ -328,28 +326,6 @@ export const GoogleSheetsModal: React.FC<GoogleSheetsModalProps> = ({
                   <span>{testStatus.message}</span>
                 </div>
               )}
-
-              {/* Reset to Mock Data */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                <div>
-                  <span className="font-semibold text-slate-800">
-                    ข้อมูลตัวอย่าง (Mock Data)
-                  </span>
-                  <p className="text-slate-400 text-[11px]">
-                    รีเซ็ตรายการให้เป็นข้อมูลตัวอย่าง 12 เดือนเริ่มต้น
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    if (confirm('คุณต้องการรีเซ็ตข้อมูลเป็นชุดตัวอย่างเริ่มต้นใช่หรือไม่?')) {
-                      onResetMockData();
-                    }
-                  }}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer"
-                >
-                  รีเซ็ต Mock Data
-                </button>
-              </div>
             </div>
           )}
 

@@ -88,7 +88,7 @@ export const ComparisonBarChart: React.FC<ComparisonBarChartProps> = ({
                   <div className="w-full flex items-end justify-center gap-1 max-w-[32px]">
                     {/* Income Bar (Emerald) */}
                     <div
-                      style={{ height: `${Math.max(incomeHeight, 2)}px` }}
+                      style={{ height: m.income > 0 ? `${Math.max(incomeHeight, 3)}px` : '0px' }}
                       className={`w-1/2 rounded-t-sm transition-all duration-200 ${
                         isHovered
                           ? 'bg-emerald-600 shadow-sm'
@@ -98,7 +98,7 @@ export const ComparisonBarChart: React.FC<ComparisonBarChartProps> = ({
 
                     {/* Expense Bar (Rose) */}
                     <div
-                      style={{ height: `${Math.max(expenseHeight, 2)}px` }}
+                      style={{ height: m.expense > 0 ? `${Math.max(expenseHeight, 3)}px` : '0px' }}
                       className={`w-1/2 rounded-t-sm transition-all duration-200 ${
                         isHovered
                           ? 'bg-rose-600 shadow-sm'
