@@ -49,8 +49,8 @@ export const EntryFormTab: React.FC<EntryFormTabProps> = ({
   const quickAmounts = [50, 100, 500, 1000];
 
   // Quick Titles based on type
-  const quickExpenseTitles = ['อาหารมื้อเที่ยง', 'กาแฟสด', 'ค่าน้ำมัน', 'ของใช้จำเป็น', 'ค่ารถไฟฟ้า', 'ช้อปปิ้ง'];
-  const quickIncomeTitles = ['เงินเดือน', 'รับจ้างฟรีแลนซ์', 'มีคนโอนให้', 'ขายของออนไลน์'];
+  const quickExpenseTitles = ['7-eleven', 'Grab', 'Line man', 'เติมน้ำมัน', 'ค่ารถไฟฟ้า', 'ช้อปปิ้ง'];
+  const quickIncomeTitles = ['เงินเดือน', 'มีคนให้', 'รับจ้างฟรีแลนซ์', 'อื่นๆ'];
 
   // Handle Switch Type
   const handleTypeChange = (newType: TransactionType) => {
